@@ -13,6 +13,14 @@
 CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor (CurrentlyAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
+    
+//    initialize();
+    
+    setInterceptsMouseClicks(true, true);
+    setMouseClickGrabsKeyboardFocus(false);
+
+    
+    
     const juce::Displays::Display* screen = juce::Desktop::getInstance().getDisplays().getPrimaryDisplay();
     
     float baseFontSize = 20.f;
@@ -52,12 +60,16 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor (CurrentlyAudioProc
     timeLabel.setText("Time: 0.0s", juce::dontSendNotification);
     
     // Add the credit label here
-    addAndMakeVisible(creditLabel);
-    creditLabel.setFont(juce::FontOptions(scaledFontSize / 5).withStyle("plain"));
-    creditLabel.setColour(juce::Label::textColourId, juce::Colour::fromRGB(184, 184, 184));
+//    addAndMakeVisible(creditLabel);
+//    creditLabel.setFont(juce::FontOptions(scaledFontSize / 5).withStyle("plain"));
+//    creditLabel.setColour(juce::Label::textColourId, juce::Colour::fromRGB(184, 184, 184));
+//    
+//    creditLabel.setJustificationType(juce::Justification::centredRight);
+//    creditLabel.setText("by Konac", juce::dontSendNotification);
     
-    creditLabel.setJustificationType(juce::Justification::centredRight);
-    creditLabel.setText("by Konac", juce::dontSendNotification);
+    // Ensure labels don't intercept mouse clicks
+    timeLabel.setInterceptsMouseClicks(false, false);
+//    creditLabel.setInterceptsMouseClicks(false, false);
     
     startTimerHz(240);
     
@@ -103,25 +115,68 @@ void CurrentlyAudioProcessorEditor::resized()
     
     
     // Position the credit label at the bottom-right corner
-    creditLabel.setBounds(getWidth() - 200, yOffset + 75, 190, 20);
+//    creditLabel.setBounds(getWidth() - 200, yOffset + 75, 190, 20);
     
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 }
 
+// Mouse down event handler
+void CurrentlyAudioProcessorEditor::mouseDown(const juce::MouseEvent& event)
+{
+    
+    isSecondUIActive = !isSecondUIActive;
+    
+    if (isSecondUIActive) {
+        
+        timeLabel.setFont(juce::FontOptions(scaledFontSize * 0.75).withStyle("bold"));
+        timeLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+        timeLabel.setJustificationType(juce::Justification::centred);
+        timeLabel.setText("by Konac", juce::dontSendNotification);
+        isTimerActive = false;
+        
+    }
+    
+    else {
+        isTimerActive = true;
+    }
+    
+    
+
+    // If click is recognized, do something:
+    timeLabel.setText("by Konac", juce::dontSendNotification);
+
+    // Repaint the component to apply changes
+    repaint();
+}
+
+
+
+void CurrentlyAudioProcessorEditor::mouseEnter(const juce::MouseEvent& event)
+{
+
+}
+
+
 void CurrentlyAudioProcessorEditor::timerCallback() {
     
+    if (isTimerActive) {
+        
+        // Gets current time in seconds
+        double currentTime = audioProcessor.getCurrentTimeInSeconds();
+        
+        // Format the time in MM:SS.ms
+        int minutes = static_cast<int>(currentTime) / 60;
+        int seconds = static_cast<int>(currentTime) % 60;
+        int milliseconds = static_cast<int>((currentTime - std::floor(currentTime)) * 100);
+        
+        // Update the label text
+        timeLabel.setText(juce::String::formatted("%02d:%02d.%02d", minutes, seconds, milliseconds),
+                         juce::dontSendNotification);
+    }
     
-    // Gets current time in seconds
-    double currentTime = audioProcessor.getCurrentTimeInSeconds();
-    
-    // Format the time in MM:SS.ms
-    int minutes = static_cast<int>(currentTime) / 60;
-    int seconds = static_cast<int>(currentTime) % 60;
-    int milliseconds = static_cast<int>((currentTime - std::floor(currentTime)) * 100);
-    
-    // Update the label text
-    timeLabel.setText(juce::String::formatted("%02d:%02d.%02d", minutes, seconds, milliseconds),
-                     juce::dontSendNotification);
+}
+
+void initialize() {
     
 }
