@@ -38,18 +38,41 @@ class CurrentlyAudioProcessorEditor : public juce::AudioProcessorEditor,
     // Display label for time
     juce::Label timeLabel;
 
-    // Keeps track if timer callback is running or not
+    // Activity trackers
     bool isTimerActive = true;
-
     bool isSecondUIActive = false;
 
     // Animator
     juce::ComponentAnimator animator;
+    const int fadeDurationMs = 200;
+    
+    // Colors
+    juce::Colour bgColour = juce::Colour::fromRGB(48, 48, 48);
 
     // Display label for credit
     juce::Label creditLabel;
-
-    double scaledFontSize = 0;
+    
+    // Fonts
+    double baseFontSize = 20;
+    double scaledFontSize = baseFontSize;
+    const double maxFontSize = 1000;
+    
+    const double creditFontSizeScale = 0.75;
+    
+    // UI resolution
+    int baseWidth = 400;
+    int baseHeight = 300;
+    // Create a scaling factor based on resolution
+    // Reference resolution (standard 1080p)
+    const int referenceWidth = 1920;
+    const int referenceHeight = 1080;
+    
+    // Screen to UI scaling percentages
+    const double screenToUIScaleWidth = 0.15;
+    const double screenToUIScaleHeight = 0.10;
+    
+    // Refresh rate
+    const int refreshRate = 300;
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

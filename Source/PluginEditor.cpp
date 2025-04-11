@@ -20,11 +20,6 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
     const juce::Displays::Display *screen =
         juce::Desktop::getInstance().getDisplays().getPrimaryDisplay();
 
-    double baseFontSize = 20;
-    scaledFontSize = baseFontSize;
-    int baseWidth = 400;
-    int baseHeight = 300;
-
     setOpaque(false);
 
     if (screen != nullptr) {
@@ -32,13 +27,8 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
         int width = resolution.getWidth();
         int height = resolution.getHeight();
 
-        baseWidth = width * 0.15;
-        baseHeight = height * 0.10;
-
-        // Create a scaling factor based on resolution
-        // Reference resolution (standard 1080p)
-        const int referenceWidth = 1920;
-        const int referenceHeight = 1080;
+        baseWidth = width * screenToUIScaleWidth;
+        baseHeight = height * screenToUIScaleHeight;
 
         // Calculate scaling - higher resolution = larger font
         double widthScale = (double)width / referenceWidth;
@@ -47,7 +37,8 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
         // Use the smaller scaling factor to ensure it fits on both dimensions
         // or average them if you prefer
         double scaleFactor = ((widthScale + heightScale) / 2.0) * 3;
-        scaledFontSize = juce::jmin(baseFontSize * scaleFactor, 1000.0);
+        
+        scaledFontSize = juce::jmin(baseFontSize * scaleFactor, maxFontSize);
     }
 
     addAndMakeVisible(timeLabel);
@@ -71,7 +62,7 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
     //    creditLabel.setInterceptsMouseClicks(false, false);
 
     // 300 FPS
-    startTimerHz(300);
+    startTimerHz(refreshRate);
 
     setName("CURRENTLY |   by Konac");
 
@@ -86,7 +77,7 @@ CurrentlyAudioProcessorEditor::~CurrentlyAudioProcessorEditor() { stopTimer(); }
 void CurrentlyAudioProcessorEditor::paint(juce::Graphics &g) {
     // (Our component is opaque, so we must completely fill the background with
     // a solid colour)
-    g.fillAll(juce::Colour::fromRGB(48, 48, 48));
+    g.fillAll(bgColour);
 
     //    g.fillAll (juce::Colours::transparentBlack);
 
@@ -122,13 +113,13 @@ void CurrentlyAudioProcessorEditor::mouseDown(const juce::MouseEvent &event) {
 
     // First fade out
     timeLabel.setAlpha(1.0f);
-    animator.fadeOut(&timeLabel, 200);
+    animator.fadeOut(&timeLabel, fadeDurationMs);
 
-    juce::Timer::callAfterDelay(200, [this]() {
+    juce::Timer::callAfterDelay(fadeDurationMs, [this]() {
         if (isSecondUIActive) {
 
             timeLabel.setFont(
-                juce::FontOptions(scaledFontSize * 0.75).withStyle("bold"));
+                juce::FontOptions(scaledFontSize * creditFontSizeScale).withStyle("bold"));
             timeLabel.setColour(juce::Label::textColourId,
                                 juce::Colours::white);
             timeLabel.setJustificationType(juce::Justification::centred);
@@ -143,7 +134,7 @@ void CurrentlyAudioProcessorEditor::mouseDown(const juce::MouseEvent &event) {
 
         timeLabel.repaint();
         timeLabel.setAlpha(0.0f);
-        animator.fadeIn(&timeLabel, 200);
+        animator.fadeIn(&timeLabel, fadeDurationMs);
 
         repaint();
     });
