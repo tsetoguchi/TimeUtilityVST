@@ -10,6 +10,9 @@
 
 #include "PluginProcessor.h"
 #include <JuceHeader.h>
+#include <string>
+
+using namespace std;
 
 //==============================================================================
 /**
@@ -35,6 +38,11 @@ class CurrentlyAudioProcessorEditor : public juce::AudioProcessorEditor,
     void timerCallback() override;
 
   private:
+    
+    // Titles
+    const string windowName = "CURRENTLY |   by Konac";
+    const string creditsText = "by Konac";
+    
     // Display label for time
     juce::Label timeLabel;
 

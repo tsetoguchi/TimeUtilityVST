@@ -64,7 +64,7 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
     // 300 FPS
     startTimerHz(refreshRate);
 
-    setName("CURRENTLY |   by Konac");
+    setName(windowName);
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -123,7 +123,7 @@ void CurrentlyAudioProcessorEditor::mouseDown(const juce::MouseEvent &event) {
             timeLabel.setColour(juce::Label::textColourId,
                                 juce::Colours::white);
             timeLabel.setJustificationType(juce::Justification::centred);
-            timeLabel.setText("by Konac", juce::dontSendNotification);
+            timeLabel.setText(creditsText, juce::dontSendNotification);
             isTimerActive = false;
 
         }
