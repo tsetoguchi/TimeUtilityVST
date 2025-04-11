@@ -20,7 +20,7 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
     const juce::Displays::Display *screen =
         juce::Desktop::getInstance().getDisplays().getPrimaryDisplay();
 
-    float baseFontSize = 20.f;
+    double baseFontSize = 20;
     scaledFontSize = baseFontSize;
     int baseWidth = 400;
     int baseHeight = 300;
@@ -41,13 +41,13 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
         const int referenceHeight = 1080;
 
         // Calculate scaling - higher resolution = larger font
-        float widthScale = (float)width / referenceWidth;
-        float heightScale = (float)height / referenceHeight;
+        double widthScale = (double)width / referenceWidth;
+        double heightScale = (double)height / referenceHeight;
 
         // Use the smaller scaling factor to ensure it fits on both dimensions
         // or average them if you prefer
-        float scaleFactor = ((widthScale + heightScale) / 2.0f) * 3;
-        scaledFontSize = juce::jmin(baseFontSize * scaleFactor, 1000.0f);
+        double scaleFactor = ((widthScale + heightScale) / 2.0) * 3;
+        scaledFontSize = juce::jmin(baseFontSize * scaleFactor, 1000.0);
     }
 
     addAndMakeVisible(timeLabel);
@@ -70,7 +70,8 @@ CurrentlyAudioProcessorEditor::CurrentlyAudioProcessorEditor(
     timeLabel.setInterceptsMouseClicks(false, false);
     //    creditLabel.setInterceptsMouseClicks(false, false);
 
-    startTimerHz(240);
+    // 300 FPS
+    startTimerHz(300);
 
     setName("CURRENTLY |   by Konac");
 
@@ -96,6 +97,9 @@ void CurrentlyAudioProcessorEditor::paint(juce::Graphics &g) {
 }
 
 void CurrentlyAudioProcessorEditor::resized() {
+    
+    
+//    TIMER RELATED
 
     // Calculate the label's height based on the scaled font size
     int labelHeight =
@@ -107,12 +111,6 @@ void CurrentlyAudioProcessorEditor::resized() {
 
     // Position the time label with dynamic height and centered vertically
     timeLabel.setBounds(getWidth() / 2 - 100, yOffset, 200, labelHeight);
-
-    // Position the credit label at the bottom-right corner
-    //    creditLabel.setBounds(getWidth() - 200, yOffset + 75, 190, 20);
-
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
 }
 
 // Mouse down event handler

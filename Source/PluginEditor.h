@@ -49,7 +49,7 @@ class CurrentlyAudioProcessorEditor : public juce::AudioProcessorEditor,
     // Display label for credit
     juce::Label creditLabel;
 
-    float scaledFontSize = 0;
+    double scaledFontSize = 0;
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
