@@ -1,4 +1,4 @@
 # TimeUtilityVST
 
 
-A simple VST plugin that displays the current timecode of the playhead. My work around solution to Ableton Live's lack of a clear timecode display.
+Currently is a JUCE-based audio plugin that provides the current timecode of the playhead. It is designed to help producers and engineers who work with DAWs that lack a clear time display.
