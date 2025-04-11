@@ -9,6 +9,8 @@ Currently is a JUCE-based audio plugin that provides the current timecode of the
 
 - Simple, intuitive user interface
 
+- UI size automatically adjusts to screen resolution
+
 - Built using JUCE and C++
 
 
